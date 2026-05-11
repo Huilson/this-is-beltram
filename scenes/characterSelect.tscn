@@ -1,0 +1,121 @@
+[gd_scene format=3 uid="uid://bjd4idxdb8l0i"]
+
+[ext_resource type="Texture2D" uid="uid://pise6ne478ts" path="res://portrait/cleric(f).png" id="1_8fogj"]
+[ext_resource type="Script" uid="uid://14p50ox7on5c" path="res://scripts/character_select.gd" id="1_woynx"]
+[ext_resource type="Texture2D" uid="uid://bpxuhs65dfwhx" path="res://portrait/ranger(m).png" id="4_ewypo"]
+[ext_resource type="Texture2D" uid="uid://1i3ae7klv487" path="res://portrait/wizard(f).png" id="5_2efwk"]
+[ext_resource type="Texture2D" uid="uid://bi8b52w8pbgml" path="res://portrait/wizard(m).png" id="6_gxvce"]
+[ext_resource type="Texture2D" uid="uid://c217fbe7cuibf" path="res://portrait/warrior(f).png" id="7_jbbcv"]
+[ext_resource type="Texture2D" uid="uid://h2h8hqhrbu4f" path="res://portrait/warrior(m).png" id="8_uas15"]
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_0mgu1"]
+load_path = "res://.godot/imported/cleric(m).png-98edec56533747ff3602c84f6a43d4b5.ctex"
+
+[sub_resource type="CompressedTexture2D" id="CompressedTexture2D_woynx"]
+load_path = "res://.godot/imported/ranger(f).png-68e3712b751bd00291ae95f2ac34ebd1.ctex"
+
+[node name="CharacterSelect" type="CanvasLayer" unique_id=78351070]
+script = ExtResource("1_woynx")
+
+[node name="VBoxContainer" type="VBoxContainer" parent="." unique_id=700222034]
+custom_minimum_size = Vector2(50, 5)
+offset_right = 40.0
+offset_bottom = 40.0
+
+[node name="CharacterGrid" type="GridContainer" parent="VBoxContainer" unique_id=1539370030]
+layout_mode = 2
+size_flags_horizontal = 4
+size_flags_vertical = 4
+columns = 4
+
+[node name="BtnCleriga" type="TextureButton" parent="VBoxContainer/CharacterGrid" unique_id=644882375]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+texture_normal = ExtResource("1_8fogj")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BtnClerigo" type="TextureButton" parent="VBoxContainer/CharacterGrid" unique_id=132749034]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+texture_normal = SubResource("CompressedTexture2D_0mgu1")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BtnArqueira" type="TextureButton" parent="VBoxContainer/CharacterGrid" unique_id=157927328]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+texture_normal = SubResource("CompressedTexture2D_woynx")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BtnArqueiro" type="TextureButton" parent="VBoxContainer/CharacterGrid" unique_id=1140092927]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+texture_normal = ExtResource("4_ewypo")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BtnMaga" type="TextureButton" parent="VBoxContainer/CharacterGrid" unique_id=1496566849]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+texture_normal = ExtResource("5_2efwk")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BtnMago" type="TextureButton" parent="VBoxContainer/CharacterGrid" unique_id=1214899060]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+texture_normal = ExtResource("6_gxvce")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BtnGuerreira" type="TextureButton" parent="VBoxContainer/CharacterGrid" unique_id=1744852566]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+texture_normal = ExtResource("7_jbbcv")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="BtnGuerreiro" type="TextureButton" parent="VBoxContainer/CharacterGrid" unique_id=1896839919]
+custom_minimum_size = Vector2(200, 200)
+layout_mode = 2
+texture_normal = ExtResource("8_uas15")
+ignore_texture_size = true
+stretch_mode = 5
+
+[node name="Label" type="Label" parent="VBoxContainer" unique_id=803889114]
+layout_mode = 2
+size_flags_horizontal = 4
+text = "Escolha seu personagem"
+
+[node name="ConfirmButton" type="Button" parent="VBoxContainer" unique_id=363866290]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "Jogar!"
+
+[node name="HostButton" type="Button" parent="VBoxContainer" unique_id=1975906107]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "Criar Host"
+
+[node name="JoinButton" type="Button" parent="VBoxContainer" unique_id=380567365]
+custom_minimum_size = Vector2(25, 25)
+layout_mode = 2
+text = "Participar"
+
+[node name="LineEdit" type="LineEdit" parent="VBoxContainer" unique_id=954989893]
+layout_mode = 2
+placeholder_text = "Digite o IP do HOST aqui"
+
+[connection signal="pressed" from="VBoxContainer/CharacterGrid/BtnCleriga" to="." method="_on_personagem_clicado" binds= ["char_0"]]
+[connection signal="pressed" from="VBoxContainer/CharacterGrid/BtnClerigo" to="." method="_on_personagem_clicado" binds= ["char_1"]]
+[connection signal="pressed" from="VBoxContainer/CharacterGrid/BtnArqueira" to="." method="_on_personagem_clicado" binds= ["char_2"]]
+[connection signal="pressed" from="VBoxContainer/CharacterGrid/BtnArqueiro" to="." method="_on_personagem_clicado" binds= ["char_3"]]
+[connection signal="pressed" from="VBoxContainer/CharacterGrid/BtnMaga" to="." method="_on_personagem_clicado" binds= ["char_6"]]
+[connection signal="pressed" from="VBoxContainer/CharacterGrid/BtnMago" to="." method="_on_personagem_clicado" binds= ["char_7"]]
+[connection signal="pressed" from="VBoxContainer/CharacterGrid/BtnGuerreira" to="." method="_on_personagem_clicado" binds= ["char_4"]]
+[connection signal="pressed" from="VBoxContainer/CharacterGrid/BtnGuerreiro" to="." method="_on_personagem_clicado" binds= ["char_5"]]
+[connection signal="pressed" from="VBoxContainer/ConfirmButton" to="." method="_on_confirm_button_pressed"]
+[connection signal="pressed" from="VBoxContainer/HostButton" to="." method="_on_btn_host_pressed"]
+[connection signal="pressed" from="VBoxContainer/JoinButton" to="." method="_on_btn_join_pressed"]

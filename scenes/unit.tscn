@@ -1,0 +1,109 @@
+[gd_scene format=3 uid="uid://csmjfckrdwmv2"]
+
+[ext_resource type="Script" uid="uid://cvh0jgiy2xu4u" path="res://scripts/unit.gd" id="1_o7ajc"]
+[ext_resource type="Texture2D" uid="uid://7hel3ghm2ffx" path="res://sprites/cleric_male.png" id="2_k673f"]
+
+[sub_resource type="Animation" id="Animation_1jvru"]
+length = 0.001
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0),
+"transitions": PackedFloat32Array(1),
+"update": 1,
+"values": [0]
+}
+
+[sub_resource type="Animation" id="Animation_k673f"]
+resource_name = "attack"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.1, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [30, 31, 32, 33, 34, 35, 36, 37, 38, 39]
+}
+
+[sub_resource type="Animation" id="Animation_gic7v"]
+resource_name = "Iddle"
+loop_mode = 1
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.100000024, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.9),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [0, 1, 2, 3, 4, 5, 6, 7, 8, 9]
+}
+
+[sub_resource type="Animation" id="Animation_tb304"]
+resource_name = "move_right"
+tracks/0/type = "value"
+tracks/0/imported = false
+tracks/0/enabled = true
+tracks/0/path = NodePath(".:frame")
+tracks/0/interp = 1
+tracks/0/loop_wrap = true
+tracks/0/keys = {
+"times": PackedFloat32Array(0, 0.099999994, 0.19999999, 0.3, 0.39999998, 0.5, 0.6, 0.7, 0.79999995, 0.9),
+"transitions": PackedFloat32Array(1, 1, 1, 1, 1, 1, 1, 1, 1, 1),
+"update": 1,
+"values": [20, 21, 22, 23, 24, 25, 26, 27, 28, 29]
+}
+
+[sub_resource type="AnimationLibrary" id="AnimationLibrary_tb304"]
+_data = {
+&"RESET": SubResource("Animation_1jvru"),
+&"attack": SubResource("Animation_k673f"),
+&"idle": SubResource("Animation_gic7v"),
+&"move": SubResource("Animation_tb304")
+}
+
+[sub_resource type="CapsuleShape2D" id="CapsuleShape2D_ruro2"]
+radius = 6.0
+height = 32.0
+
+[sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_k673f"]
+properties/0/path = NodePath(".:position")
+properties/0/spawn = true
+properties/0/replication_mode = 1
+properties/1/path = NodePath("Character:flip_h")
+properties/1/spawn = true
+properties/1/replication_mode = 1
+properties/2/path = NodePath("Character:frame")
+properties/2/spawn = true
+properties/2/replication_mode = 1
+
+[node name="Unit" type="CharacterBody2D" unique_id=825196013]
+z_index = 10
+script = ExtResource("1_o7ajc")
+
+[node name="Character" type="Sprite2D" parent="." unique_id=381166812]
+z_index = 10
+texture_filter = 1
+texture = ExtResource("2_k673f")
+hframes = 10
+vframes = 5
+
+[node name="AnimationPlayer" type="AnimationPlayer" parent="Character" unique_id=593724215]
+libraries/ = SubResource("AnimationLibrary_tb304")
+
+[node name="CollisionShape2D" type="CollisionShape2D" parent="." unique_id=789836953]
+shape = SubResource("CapsuleShape2D_ruro2")
+
+[node name="MultiplayerSynchronizer" type="MultiplayerSynchronizer" parent="." unique_id=516952155]
+replication_config = SubResource("SceneReplicationConfig_k673f")
