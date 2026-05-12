@@ -20,3 +20,12 @@ func entrar_no_host(ip = DEFAULT_IP):
 		return
 	multiplayer.multiplayer_peer = peer
 	print("Conectando ao servidor...")
+
+func obter_meu_ip() -> String:
+	# Retorna todos os endereços de IP da máquina
+	var ips = IP.get_local_addresses()
+	for ip in ips:
+		# Filtra apenas o IPv4 e ignora o IP interno (127.0.0.1)
+		if ":" not in ip and ip != "127.0.0.1" and not ip.begins_with("169"):
+			return ip
+	return "127.0.0.1" # Fallback caso nada seja encontrado

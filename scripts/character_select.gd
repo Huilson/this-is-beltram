@@ -29,33 +29,45 @@ func _on_personagem_clicado(chave: String):
 # Função para o botão de Confirmar
 func _on_confirm_button_pressed():
 	if Global.selected_char_key == "":
-		print("Erro: Selecione um personagem!")
+		print("Selecione um personagem!")
 		return
 		
 	if multiplayer.multiplayer_peer == null:
-		print("Erro: Você precisa Criar Host ou Entrar em um primeiro!")
+		print("Você não está conectado a nenhuma rede!")
 		return
 
-	# Avisa o servidor sobre a escolha
+	# Primeiro: Avisa o servidor quem você escolheu
 	var meu_id = multiplayer.get_unique_id()
 	registrar_escolha_no_servidor.rpc(meu_id, Global.selected_char_key)
 	
-	# Vai para o mapa
-	get_tree().change_scene_to_file("res://scenes/map_scene.tscn")
+	# Segundo: Se você for o Host, manda todo mundo mudar de cena
+	if multiplayer.is_server():
+		# Damos um pequeno tempo (0.1s) para o RPC da escolha chegar antes da troca de cena
+		await get_tree().create_timer(0.1).timeout
+		mudar_cena_para_todos.rpc("res://scenes/map_scene.tscn")
+	else:
+		print("Aguardando o Host iniciar a partida...")
 
-# 2. BOTÃO HOST (CONECTE NO SINAL 'PRESSED' DO SEU BOTÃO HOST)
+# 5. COMUNICAÇÃO RPC
+@rpc("any_peer", "call_local", "reliable")
+func registrar_escolha_no_servidor(id_jogador, chave_personagem):
+	Global.escolhas_multiplayer[id_jogador] = chave_personagem
+	print("Registro: Jogador ", id_jogador, " escolheu ", chave_personagem)
+
+@rpc("authority", "call_local", "reliable")
+func mudar_cena_para_todos(caminho_da_cena: String):
+	print("Mudando de cena para: ", caminho_da_cena)
+	get_tree().change_scene_to_file(caminho_da_cena)
+
+#BOTÃO HOST (CONECTE NO SINAL 'PRESSED' DO SEU BOTÃO HOST)
 func _on_btn_host_pressed():
 	NetworkManager.criar_host()
-	# Como host, você já está conectado. Pode liberar o botão confirmar.
-	print("Host criado. Aguardando jogadores...")
+	var ip = NetworkManager.obter_meu_ip()
+	print("Servidor Iniciado! Seu IP: ", ip)
+	lineEdit.text = "IP para conexão: " + ip
 
+#BOTÃO DE JOIN
 func _on_btn_join_pressed():
+# Substitua pelo IP do Host ou use um LineEdit: $IPEdit.text
 	NetworkManager.entrar_no_host(lineEdit.text)
-	print("Tentando conectar...")
-	
-#LÓGICA DE REDE (RPC)
-@rpc("any_peer", "call_local")
-func registrar_escolha_no_servidor(id_jogador, chave_personagem):
-	# Esta parte roda no Servidor para organizar quem é quem
-	Global.escolhas_multiplayer[id_jogador] = chave_personagem
-	print("Jogador ", id_jogador, " registrado como ", chave_personagem)
+	print("Tentando conectar ao servidor...")

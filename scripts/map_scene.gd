@@ -24,23 +24,31 @@ func _ready():
 
 func adicionar_jogador(id):
 	var heroi = unit_scene.instantiate()
-	
-	# 1. Configurações de Identidade
 	heroi.name = str(id)
 	heroi.set_multiplayer_authority(id)
 	
-	# 2. Define a posição ANTES de adicionar à árvore
-	# Converte a coordenada do tile (6,6) para pixels
+	# Define a posição antes de colocar na árvore
 	var posicao_spawn = tilemap.map_to_local(Vector2i(6, 6))
 	heroi.global_position = posicao_spawn
 	
-	# 3. Adiciona ao container (isso dispara o spawn na rede)
+	# Adiciona ao container
 	$UnitsContainer.add_child(heroi, true)
 	
-	# 4. Busca os dados de escolha salvos no Global
+	# --- A CORREÇÃO ESTÁ AQUI ---
+	# Tentamos pegar a escolha. Se não houver nada (null), usamos "mago_homem" como padrão.
 	var chave = Global.escolhas_multiplayer.get(id, "mago_homem")
-	var dados = Global.characters_data[chave]
-	heroi.setup(dados)
+	
+	# Verificamos se a chave realmente existe no characters_data para evitar o erro
+	if Global.characters_data.has(chave):
+		var dados = Global.characters_data[chave]
+		heroi.setup(dados)
+	else:
+		# Se tudo falhar, carrega o primeiro herói disponível
+		var primeira_chave = Global.characters_data.keys()[0]
+		heroi.setup(Global.characters_data[primeira_chave])
+	
+	if id == multiplayer.get_unique_id():
+		_conectar_camera_ao_heroi(heroi)
 	
 	# 5. Se este herói for o MEU, a câmera deve segui-lo
 	if id == multiplayer.get_unique_id():
