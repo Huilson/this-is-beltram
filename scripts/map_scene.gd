@@ -14,10 +14,13 @@ var unit_scene = preload("res://scenes/unit.tscn")
 
 # Lista de posições de spawn no tilemap (em coordenadas de tile), uma por jogador.
 # Suporta até 8 jogadores simultâneos. O índice é determinado pela ordem de entrada.
-var spawn_slots = [
-	Vector2i(6, 6), Vector2i(9, 6), Vector2i(6, 9), Vector2i(9, 9),
-	Vector2i(12, 6), Vector2i(12, 9), Vector2i(6, 12), Vector2i(9, 12)
-]
+var pilha_spawn: Array[Vector2i] = [
+	Vector2i(4,6),
+	Vector2i(10,6),
+	Vector2i(16,6),
+	Vector2i(16,10),
+	]
+ # adicionando posições na pilha
 
 # Executado quando a cena é carregada por qualquer jogador.
 func _ready():
@@ -32,7 +35,7 @@ func _ready():
 		adicionar_jogador(multiplayer.get_unique_id())                    # Adiciona o próprio host como jogador
 	else:
 		adicionar_jogador(multiplayer.get_unique_id())                    # Cliente adiciona a si mesmo localmente
-		pedir_spawn_existentes.rpc_id(1)                                  # Pede ao servidor os jogadores já presentes
+		pedir_spawn_existentes.rpc_id(1)                               # Pede ao servidor os jogadores já presentes
 
 # Sinal disparado pelo servidor quando um novo peer se conecta.
 # Notifica todos os peers existentes para criarem o personagem do novo jogador.
@@ -67,9 +70,8 @@ func adicionar_jogador(id: int):
 	heroi.set_multiplayer_authority(id)        # Define quem tem autoridade sobre este nó (quem pode mover, etc.)
 
 	# Determina a posição de spawn com base na quantidade de jogadores já presentes
-	var index = $UnitsContainer.get_child_count()              # Conta quantos jogadores já estão na cena
-	var tile = spawn_slots[index % spawn_slots.size()]         # Escolhe o slot ciclicamente (evita índice fora do range)
-	heroi.global_position = tilemap.map_to_local(tile)         # Converte a coordenada de tile para posição no mundo
+	var index = $UnitsContainer.get_child_count()              # Conta quantos jogadores já estão na cena	
+	heroi.global_position = tilemap.map_to_local(pilha_spawn.pop_back())         # Converte a coordenada de tile para posição no mundo
 
 	$UnitsContainer.add_child(heroi, true)     # Adiciona o herói ao container; "true" garante que o nome seja único na rede
 

@@ -47,7 +47,7 @@ func _on_body_entered(body: Node):
 		queue_free()
 		return
 
-	# Acertou uma parede do TileMap (StaticBody2D) ou qualquer outro corpo sólido — some
-	if body is TileMapLayer:
+	# Acertou uma parede do TileMapLayer ou um StaticBody2D ou qualquer outro corpo sólido — some
+	if body is TileMapLayer or StaticBody2D:
 		print("bateu na parede")
 		queue_free()
