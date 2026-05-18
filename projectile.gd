@@ -43,11 +43,12 @@ func _on_body_entered(body: Node):
 
 	# Acertou um personagem vivo — aplica dano e some
 	if body is CharacterBody2D and body.has_method("receber_dano") and not body.is_dead:
-		body.receber_dano.rpc_id(1, body.get_path(), dano)
+		print("Projetil, acertou um jogador")
+		body.receber_dano.rpc_id(body.get_path(), dano)
 		queue_free()
 		return
 
 	# Acertou uma parede do TileMapLayer ou um StaticBody2D ou qualquer outro corpo sólido — some
 	if body is TileMapLayer or StaticBody2D:
-		print("bateu na parede")
+		print("Projetil, bateu na parede")
 		queue_free()

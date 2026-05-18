@@ -106,7 +106,7 @@ _data = {
 }
 
 [sub_resource type="RectangleShape2D" id="RectangleShape2D_k673f"]
-size = Vector2(11, 17)
+size = Vector2(15, 20)
 
 [sub_resource type="SceneReplicationConfig" id="SceneReplicationConfig_k673f"]
 properties/0/path = NodePath(".:position")
@@ -120,7 +120,7 @@ properties/2/spawn = true
 properties/2/replication_mode = 1
 
 [sub_resource type="CircleShape2D" id="CircleShape2D_k673f"]
-radius = 7.071068
+radius = 13.038404
 
 [node name="Unit" type="CharacterBody2D" unique_id=825196013]
 z_index = 10
@@ -148,6 +148,5 @@ replication_config = SubResource("SceneReplicationConfig_k673f")
 position = Vector2(14, 0)
 
 [node name="MeleeAttackRange" type="CollisionShape2D" parent="MeleeArea" unique_id=1264175852]
-position = Vector2(-14, 0)
 shape = SubResource("CircleShape2D_k673f")
 debug_color = Color(0.99784607, 0, 0.16709852, 0.41960785)

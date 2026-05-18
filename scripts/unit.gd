@@ -15,10 +15,10 @@ extends CharacterBody2D
 
 # --- Estado de combate ---
 var char_class: String = ""   # Classe deste personagem ("Warrior", "Cleric", "Archer", "Wizard")
-var max_hp: int = 0
-var current_hp: int = 0
-var damage: int = 0
-var attack_range: float = 0.0
+var max_hp: int = 100
+var current_hp: int = 100
+var damage: int = 10
+var attack_range: float = 40.0
 var attack_type: String = "melee"  # "melee" ou "projectile"
 
 var is_attacking = false
@@ -34,22 +34,13 @@ func setup(data: Dictionary):
 		await ready
 
 	# Lê os stats da classe no Global e os aplica localmente
-	char_class = data.get("class", "") #Primeiro buscamos informações da classe
+	char_class = data.get("class", "Warrior")
 	var stats = Global.class_stats.get(char_class, {})
-	
-	#Dados particulares de cada classe
-	max_hp       = stats.get("max_hp", 0)
+	max_hp       = stats.get("max_hp", 100)
 	current_hp   = max_hp
-	damage       = stats.get("damage", 0)
-	attack_range = stats.get("attack_range", 0.0)
+	damage       = stats.get("damage", 10)
+	attack_range = stats.get("attack_range", 40.0)
 	attack_type  = stats.get("attack_type", "melee")
-	
-	if char_class == "":
-		print("Erro ao buscar dados da classe... Encerrando...")
-		return
-	else:
-		print("Dados: ", data)
-		print("Status da Classe: ", stats)
 
 	# Configura o tamanho do hitbox corpo a corpo com base no range da classe
 	if melee_area:
@@ -107,7 +98,7 @@ func _sincronizar_animacao(nome_anim: String, flip_h: bool):
 func atacar():
 	is_attacking = true
 	velocity = Vector2.ZERO
-	_iniciar_ataque.rpc()                    # Toca a animação em todos os peers
+	_iniciar_ataque.rpc()   # Toca a animação "attack" em todos os peers
 
 	if attack_type == "melee":
 		# Corpo a corpo: aplica o dano no meio da animação para coincidir com o frame de impacto.
@@ -116,8 +107,7 @@ func atacar():
 		_executar_ataque_melee()
 		await anim_player.animation_finished
 	else:
-		# Projétil: aguarda a animação completa terminar antes de instanciar a flecha,
-		# assim a flecha só aparece após o personagem concluir o gesto de disparo.
+		# Mesma lógica acima.
 		await get_tree().create_timer(0.6).timeout
 		_disparar_projetil()
 		await anim_player.animation_finished
@@ -135,6 +125,7 @@ func _executar_ataque_melee():
 	if not melee_area:
 		return
 
+	print("Tudo certo o ataque começou")
 	# Posiciona o hitbox à frente do personagem conforme a direção que ele está olhando
 	var direcao_x = -1.0 if sprite.flip_h else 1.0
 	melee_area.position = Vector2(attack_range * 0.5 * direcao_x, 0)
@@ -148,9 +139,9 @@ func _executar_ataque_melee():
 	for area in melee_area.get_overlapping_areas():
 		var alvo = area.get_parent()
 		# Garante que o alvo é outra Unit, está viva e não é o próprio atacante
-		if alvo is CharacterBody2D and alvo != self and not alvo.is_dead:
+		if alvo is CharacterBody2D and alvo != self:
 			# Envia o pedido de dano ao servidor (apenas o servidor aplica dano)
-			receber_dano.rpc_id(1, alvo.get_path(), damage)
+			receber_dano.rpc_id(alvo.get_path(), damage)
 
 # --- Projétil ---
 # Instancia o projétil e o lança na direção que o personagem está olhando.
@@ -179,7 +170,7 @@ func receber_dano(alvo_path: NodePath, valor: int):
 		return
 
 	var alvo = get_node_or_null(alvo_path)
-	if alvo == null or alvo.is_dead:
+	if alvo == null:
 		return
 
 	# Aplica o dano e propaga o novo HP para todos os peers
@@ -196,7 +187,7 @@ func _aplicar_hp(alvo_path: NodePath, novo_hp: int):
 	alvo.current_hp = novo_hp
 	print("[%s] HP: %d / %d" % [alvo.name, alvo.current_hp, alvo.max_hp])
 
-	if alvo.current_hp <= 0 and not alvo.is_dead:
+	if alvo.current_hp <= 0:
 		alvo._morrer()
 
 # Toca a animação de morte e remove o nó ao terminar.
