@@ -1,50 +1,76 @@
 # res://scripts/Global.gd
 extends Node
+ 
+# Estatísticas de combate por classe.
+# Todos os personagens de uma mesma classe compartilham esses valores.
+# - max_hp:        vida máxima
+# - damage:        dano causado por ataque
+# - attack_range:  alcance do hitbox corpo a corpo em pixels (ignorado por projétil)
+# - attack_type:   "melee" (corpo a corpo) ou "projectile" (dispara projétil)
+var class_stats = {
+	"Cleric": {
+		"max_hp": 120,
+		"damage": 18,
+		"attack_range": 40.0,
+		"attack_type": "melee"
+	},
+	"Warrior": {
+		"max_hp": 150,
+		"damage": 25,
+		"attack_range": 45.0,
+		"attack_type": "melee"
+	},
+	"Archer": {
+		"max_hp": 90,
+		"damage": 20,
+		"attack_range": 0.0,
+		"attack_type": "projectile"
+	},
+	"Wizard": {
+		"max_hp": 80,
+		"damage": 35,
+		"attack_range": 0.0,
+		"attack_type": "projectile"
+	},
+}
 
-# Um dicionário para guardar as informações dos personagens
-# Você pode expandir isso com status, habilidades, etc.
+# Dicionário central com os dados de todos os personagens jogáveis.
+# Cada entrada usa uma chave string ("char_0", "char_1", etc.) para identificar o personagem.
 var characters_data = {
 	"char_0": {
-		"name": "Cleriga",
-		"portrait": "res://sprites/portraits/cleric(f).png", # Caminho da imagem
-		"sprite_sheet": "res://sprites/cleric_female.png",
-		"offset_frame": 50,
-		"class": "Cleric"
+		"name": "Cleriga",                                    # Nome exibido na interface
+		"portrait": "res://sprites/portraits/cleric(f).png", # Caminho do retrato (imagem de seleção)
+		"sprite_sheet": "res://sprites/cleric_female.png",   # Spritesheet usada no mapa
+		"class": "Cleric"                                     # Classe do personagem (pode ser usada para lógica futura)
 	},
 	"char_1": {
 		"name": "Clerigo",
-		"portrait": "res:/sprites/portraits/cleric(m)",
+		"portrait": "res://sprites/portraits/cleric(m)",
 		"sprite_sheet": "res://sprites/cleric_male.png",
-		"offset_frame": 0,
 		"class": "Cleric"
 	},
-	# Adicione os outros 6 personagens aqui da mesma forma
 	"char_2": {
 		"name": "Arqueira",
 		"portrait": "res://sprites/portraits/ranger(f).png",
 		"sprite_sheet": "res://sprites/ranger_female.png",
-		"offset_frame": 50,
 		"class": "Archer"
 	},
 	"char_3": {
 		"name": "Arqueiro",
 		"portrait": "res://sprites/portraits/ranger(m).png",
 		"sprite_sheet": "res://sprites/ranger_male.png",
-		"offset_frame": 0,
 		"class": "Archer"
 	},
 	"char_4": {
 		"name": "Guerreira",
 		"portrait": "res://sprites/portraits/warrior(f).png",
 		"sprite_sheet": "res://sprites/warrior_female.png",
-		"offset_frame": 50,
 		"class": "Warrior"
 	},
 	"char_5": {
 		"name": "Guerreiro",
 		"portrait": "res://sprites/portraits/warrior(m).png",
 		"sprite_sheet": "res://sprites/warrior_male.png",
-		"offset_frame": 0,
 		"class": "Warrior"
 	},
 	"char_6": {
@@ -61,8 +87,11 @@ var characters_data = {
 	},
 }
 
-# Ele vai guardar quem é quem na rede. Ex: {1: "mago_homem", 58392: "mago_mulher"}
+# Dicionário usado durante o multiplayer para registrar qual personagem cada jogador escolheu.
+# Formato: { id_do_jogador (int): chave_do_personagem (String) }
+# Exemplo: { 1: "char_2", 58392: "char_5" }
 var escolhas_multiplayer: Dictionary = {}
 
-# Variável para guardar o personagem selecionado no momento
+# Guarda temporariamente a chave do personagem selecionado na tela de seleção.
+# É preenchida quando o jogador clica em um personagem e lida ao entrar no mapa.
 var selected_char_key = ""
