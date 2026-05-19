@@ -21,18 +21,17 @@ var spawn_slots = [
 
 # Executado quando a cena é carregada por qualquer jogador.
 func _ready():
-	# Se nenhum personagem foi selecionado, não inicializa nada (segurança contra entradas inválidas)
 	if Global.selected_char_key == "":
 		return
 
 	if multiplayer.is_server():
-		# O host conecta os sinais de entrada/saída de peers para gerenciar jogadores dinamicamente
-		multiplayer.peer_connected.connect(_on_novo_peer_conectado)       # Novo jogador entrou
-		multiplayer.peer_disconnected.connect(remover_jogador)            # Jogador saiu
-		adicionar_jogador(multiplayer.get_unique_id())                    # Adiciona o próprio host como jogador
+		multiplayer.peer_connected.connect(_on_novo_peer_conectado)
+		multiplayer.peer_disconnected.connect(remover_jogador)
+		adicionar_jogador(multiplayer.get_unique_id())
 	else:
-		adicionar_jogador(multiplayer.get_unique_id())                    # Cliente adiciona a si mesmo localmente
-		pedir_spawn_existentes.rpc_id(1)                                  # Pede ao servidor os jogadores já presentes
+		# Remove esta linha ↓ — o servidor vai fazer isso via rpc
+		# adicionar_jogador(multiplayer.get_unique_id())
+		pedir_spawn_existentes.rpc_id(1)                                 # Pede ao servidor os jogadores já presentes
 
 # Sinal disparado pelo servidor quando um novo peer se conecta.
 # Notifica todos os peers existentes para criarem o personagem do novo jogador.
